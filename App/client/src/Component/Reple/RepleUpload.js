@@ -1,17 +1,18 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { Button } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import axios from 'axios';
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
+import { RepleUploadDiv } from '../../Styled/RepleCSS.js';
 export default function RepleUpload({ postInfo }) {
   const user = useSelector((state) => state.user);
-  const [reple, setReple] = useState("");
+  const [reple, setReple] = useState('');
 
   const submitHandler = (e) => {
     e.preventDefault();
 
     if (!reple) {
-      alert("댓글을 써주세요");
+      alert('댓글을 써주세요');
       return;
     }
     let body = {
@@ -20,28 +21,32 @@ export default function RepleUpload({ postInfo }) {
       reple: reple,
     };
 
-    axios.post("/api/reple/submit", body).then((res) => {
+    axios.post('/api/reple/submit', body).then((res) => {
       if (res.data.success) {
-        alert("댓글을 저장했습니다.");
-        setReple("");
+        alert('댓글을 저장했습니다.');
+        setReple('');
         window.location.reload();
       }
     });
   };
   return (
-    <div>
-      {user.accessToken && (
-        <form>
-          <label htmlFor="content">내용</label>
-          <textarea
-            id="content"
-            type="text"
-            value={reple}
-            onChange={(event) => setReple(event.currentTarget.value)}
-          />
-          <Button onClick={(e) => submitHandler(e)}>전송</Button>
-        </form>
-      )}
-    </div>
+    <RepleUploadDiv>
+      <form>
+        <input
+          type='text'
+          value={reple}
+          onChange={(e) => {
+            setReple(e.currentTarget.value);
+          }}
+        />
+        <button
+          onClick={(e) => {
+            submitHandler(e);
+          }}
+        >
+          등록
+        </button>
+      </form>
+    </RepleUploadDiv>
   );
 }

@@ -1,35 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import Avatar from "react-avatar";
-import styled from "@emotion/styled";
-import axios from "axios";
-import fireBase from "../../FireBase";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Avatar from 'react-avatar';
+import styled from '@emotion/styled';
+import axios from 'axios';
+import fireBase from '../../FireBase';
+import { LoginDiv, MyPageDiv } from '../../Styled/UserCSS';
 
 export default function MyPage() {
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   let params = useParams();
   const [userInfo, setUserInfo] = useState({});
-  const [userPhoto, setUserPhoto] = useState("");
+  const [userPhoto, setUserPhoto] = useState('');
   useEffect(() => {
     if (user.isLoading && !user.accessToken) {
-      navigate("/");
+      navigate('/');
     } else {
       setUserPhoto(user.photoURL);
     }
   }, [user]);
   const fileUpload = async (e) => {
     var formData = new FormData();
-    formData.append("file", e.target.files[0]);
+    formData.append('file', e.target.files[0]);
     try {
       //const result = await axios.post('/api/post/img/upload', formData);
       const result = await axios({
-        method: "post",
-        url: "/api/user/profile/img",
+        method: 'post',
+        url: '/api/user/profile/img',
         data: formData,
         headers: {
-          "Content-Type": "multipart/form-data; charset=UTF-8",
+          'Content-Type': 'multipart/form-data; charset=UTF-8',
         },
       });
       if (result.data.success) {
@@ -52,10 +53,10 @@ export default function MyPage() {
         uid: user.uid,
       };
 
-      const res = await axios.post("/api/user/profile/update", body);
+      const res = await axios.post('/api/user/profile/update', body);
       console.log(res);
       if (res.data.success) {
-        alert("프로필 수정이 완료됐습니다.");
+        alert('프로필 수정이 완료됐습니다.');
         window.location.reload();
       }
     } catch (error) {
@@ -63,22 +64,34 @@ export default function MyPage() {
     }
   };
   return (
-    <MyPageTopDiv>
-      <MyPageForm>
-        <input
-          type="file"
-          className="shadow-none"
-          accept="image/*"
-          onChange={(e) => fileUpload(e)}
-        />
-        <Avatar
-          size="100"
-          round={true}
-          src={`http://localhost:5000/${user.photoURL}`}
-        />
+    <MyPageDiv style={{ width: '100vw', height: '100vh' }}>
+      <form
+        style={{
+          width: '50%',
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginTop: '2rem',
+        }}
+      >
+        <label>
+          <input
+            type='file'
+            accept='image/*'
+            style={{ display: 'none' }}
+            onChange={(e) => fileUpload(e)}
+          />
+          <Avatar
+            size='100'
+            round={true}
+            src={userPhoto}
+            style={{ border: '1px solid #c6c6c6', cursor: 'pointer' }}
+          />
+        </label>
         <button onClick={(e) => UpdateProfileHandler(e)}>저장</button>
-      </MyPageForm>
-    </MyPageTopDiv>
+      </form>
+    </MyPageDiv>
   );
 }
 

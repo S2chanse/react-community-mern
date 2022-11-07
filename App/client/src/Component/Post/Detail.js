@@ -1,10 +1,12 @@
-import React from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import Avatar from "react-avatar";
-import axios from "axios";
-import moment from "moment";
-import "moment/locale/ko";
+import React from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Avatar from 'react-avatar';
+import axios from 'axios';
+import moment from 'moment';
+import 'moment/locale/ko';
+
+import { PostDiv, Post, BtnDiv } from '../../Styled/PostDetailCSS.js';
 
 export default function Detail({ postInfo }) {
   let params = useParams();
@@ -12,12 +14,12 @@ export default function Detail({ postInfo }) {
   const user = useSelector((state) => state.user);
   /** 삭제 fnc **/
   const deleteRow = async () => {
-    if (window.confirm("삭제하시겠습니까?")) {
+    if (window.confirm('삭제하시겠습니까?')) {
       try {
-        const res = await axios.post("/api/post/delete", params);
+        const res = await axios.post('/api/post/delete', params);
         if (res.data.success) {
-          alert("삭제가 완료됐습니다.");
-          naviagte("/");
+          alert('삭제가 완료됐습니다.');
+          naviagte('/');
         }
       } catch (error) {
         console.error(error);
@@ -26,43 +28,45 @@ export default function Detail({ postInfo }) {
   };
   const setTimeWhat = (a, b) => {
     return a === b
-      ? moment(a).format("YYYY-MM-DD hh:mm") + "(New)"
-      : moment(b).format("YYYY-MM-DD hh:mm") + "(수정됨)";
+      ? moment(a).format('YYYY-MM-DD hh:mm') + '(New)'
+      : moment(b).format('YYYY-MM-DD hh:mm') + '(수정됨)';
   };
   return (
-    <div>
-      <h1>{postInfo.title}</h1>
-      <p>{setTimeWhat(postInfo.createdAt, postInfo.updatedAt)}</p>
-      <p>
-        <Avatar
-          size="40"
-          round={true}
-          src={`http://localhost:5000/${user.photoURL}`}
-        />
-        {postInfo.author.displayName}
-      </p>
-      {postInfo.image ? (
-        <img
-          src={`http://localhost:5000/${postInfo.image}`}
-          alt="이미지"
-          style={{ width: "100px", height: "100px" }}
-        />
-      ) : null}
-      <h3>{postInfo.content}</h3>
+    <PostDiv>
+      <Post>
+        <h1>{postInfo.title}</h1>
+        <div className='author'>
+          <Avatar
+            size='40'
+            round={true}
+            src={postInfo.author.photoURL}
+            style={{ border: '1px solid #c6c6c6' }}
+          />
+          <p>{postInfo.author.displayName}</p>
+          <p className='time'>
+            {setTimeWhat(postInfo.createdAt, postInfo.updatedAt)}
+          </p>
+        </div>
+        {postInfo.image ? (
+          <img
+            src={postInfo.image}
+            alt=''
+            style={{ width: '100%', height: 'auto' }}
+          />
+        ) : null}
+        <p>{postInfo.content}</p>
+      </Post>
       {user.uid === postInfo.author.uid && (
-        <>
+        <BtnDiv>
           <Link to={`/edit/${postInfo.postNum}`}>
-            <button> 수정 </button>
+            <button className='edit'>수정</button>
           </Link>
-          <button
-            onClick={() => {
-              deleteRow();
-            }}
-          >
+
+          <button className='delete' onClick={() => deleteRow()}>
             삭제
           </button>
-        </>
+        </BtnDiv>
       )}
-    </div>
+    </PostDiv>
   );
 }

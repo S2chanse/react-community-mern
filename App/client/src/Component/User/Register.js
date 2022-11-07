@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from "react";
-import LoginDiv from "../../Styled/UserCSS";
-import firebase from "../../FireBase";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import { LoginDiv, MyPageDiv } from '../../Styled/UserCSS';
+import firebase from '../../FireBase';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 export default function () {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [pwConfirm, setPwConfirm] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [pwConfirm, setPwConfirm] = useState('');
   const [flag, setFlag] = useState(false);
   const [nameCheck, setNameCheck] = useState(false);
-  const [nameChkMsg, setNameChkMsg] = useState("");
+  const [nameChkMsg, setNameChkMsg] = useState('');
   const user = useSelector((state) => state.user);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("회원가입", user);
+    console.log('회원가입', user);
     if (user.isLoading && user.accessToken) {
-      alert("로그인한 사용자는 접근 불가능합니다.");
-      navigate("/");
+      alert('로그인한 사용자는 접근 불가능합니다.');
+      navigate('/');
     }
   }, [user]);
 
@@ -29,19 +29,19 @@ export default function () {
     setFlag(true);
     e.preventDefault();
     if (!(name || email || password || pwConfirm)) {
-      alert("모든 값을 채워주세요.");
+      alert('모든 값을 채워주세요.');
       return;
     }
     if (!nameCheck) {
-      alert("닉네임중복검사를 진행해 주세요.");
+      alert('닉네임중복검사를 진행해 주세요.');
       return;
     }
     if (password.length < 9) {
-      alert("비밀번호는 최소 9글자 이상 입력해주세요.");
+      alert('비밀번호는 최소 9글자 이상 입력해주세요.');
       return;
     }
     if (password !== pwConfirm) {
-      alert("비밀번호가 같지 않습니다.");
+      alert('비밀번호가 같지 않습니다.');
       return;
     }
     try {
@@ -56,14 +56,14 @@ export default function () {
         displayName: createUser.user.multiFactor.user.displayName,
         uid: createUser.user.multiFactor.user.uid,
       };
-      const res = await axios.post("api/user/register", body);
+      const res = await axios.post('api/user/register', body);
       setFlag(false);
       if (res.data.success) {
         //회원가입 성공 시
-        alert("회원가입에 성공했습니다");
-        navigate("/login");
+        alert('회원가입에 성공했습니다');
+        navigate('/login');
       } else {
-        alert("회원가입에 실패했습니다");
+        alert('회원가입에 실패했습니다');
       }
     } catch (error) {
       console.error(error);
@@ -72,14 +72,14 @@ export default function () {
 
   const NameCheckFnc = async (e) => {
     e.preventDefault();
-    const res = await axios.post("/api/user/nickNameCheck", { nickName: name });
+    const res = await axios.post('/api/user/nickNameCheck', { nickName: name });
     if (res.data.success && res.data.check) {
-      alert("닉네임이 사용가능합니다.");
+      alert('닉네임이 사용가능합니다.');
       setNameCheck(true);
-      setNameChkMsg("사용 가능");
+      setNameChkMsg('사용 가능');
     } else {
-      alert("해당 닉네임은 존재합니다.");
-      setNameChkMsg("사용 불가");
+      alert('해당 닉네임은 존재합니다.');
+      setNameChkMsg('사용 불가');
     }
   };
 
@@ -87,27 +87,27 @@ export default function () {
     <LoginDiv>
       <form>
         <input
-          type="name"
-          placeholder="닉네임"
+          type='name'
+          placeholder='닉네임'
           onChange={(e) => setName(e.currentTarget.value)}
           disabled={nameCheck}
         />
         <p>{nameChkMsg}</p>
         <button onClick={(e) => NameCheckFnc(e)}>닉네임 중복검사</button>
         <input
-          type="email"
-          placeholder="이메일"
+          type='email'
+          placeholder='이메일'
           onChange={(e) => setEmail(e.currentTarget.value)}
         />
         <input
-          type="password"
-          placeholder="비밀번호"
+          type='password'
+          placeholder='비밀번호'
           minLength={8}
           onChange={(e) => setPassword(e.currentTarget.value)}
         />
         <input
-          type="password"
-          placeholder="비밀번호 확인"
+          type='password'
+          placeholder='비밀번호 확인'
           minLength={8}
           onChange={(e) => setPwConfirm(e.currentTarget.value)}
         />
